@@ -5,6 +5,7 @@ const BeforeNavigator = ({ onPress }) => {
   return (
     <TouchableOpacity style={styles.button} onPress={onPress}>
       <Ionicons name="arrow-back" size={24} color="black" />
+      
     </TouchableOpacity>
   );
 };

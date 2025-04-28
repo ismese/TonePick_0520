@@ -3,21 +3,28 @@ import React from 'react';
 import { View, Text, TextInput, TouchableOpacity, SafeAreaView } from 'react-native';
 import { styles } from './Change_id_screen_style';
 import BeforeNavigator from '../../../navigations/BeforeNavigator';
+import { useNavigation } from '@react-navigation/native';
+
 
 const ChangeIdScreen = () => {
+  
+  const navigation = useNavigation(); 
   return (
+    
     <SafeAreaView style={styles.screen}> 
         <TouchableOpacity
-          onPress={() => navigation.goBack()}
-          style={{
-            position: "relative",
-            top: 50,
-            left: 10,
-            zIndex: 10,
-          }}
-        >
-          <BeforeNavigator />
-        </TouchableOpacity>
+        style={{
+          position: "relative",
+          top: 50,
+          left: 10,
+          zIndex: 10,
+        }}
+      >
+        <BeforeNavigator 
+          onPress={() => navigation.goBack()} 
+        />
+      </TouchableOpacity>
+
       <View style={styles.container}>
         <Text style={styles.title}>아이디 변경하기</Text>
         <View style={styles.separator} />

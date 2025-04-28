@@ -3,8 +3,11 @@ import React from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, SafeAreaView} from 'react-native';
 import { styles } from './signup_screen_style';
 import BeforeNavigator from '../../../navigations/BeforeNavigator';
+import { useNavigation } from '@react-navigation/native';
 
 const SignupScreen = () => {
+  const navigation = useNavigation(); 
+
   return (
     <SafeAreaView style={styles.screen}> 
         <TouchableOpacity
@@ -16,7 +19,9 @@ const SignupScreen = () => {
             zIndex: 10,
           }}
         >
-          <BeforeNavigator />
+          <BeforeNavigator 
+          onPress={() => navigation.goBack()} // ✅ 이제 오류 없음
+        />
         </TouchableOpacity>
       <View style={styles.container}>
         <Text style={styles.title}>회원가입</Text>

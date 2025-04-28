@@ -24,7 +24,7 @@ const SigninScreen = () => {
           secureTextEntry
         />
 
-        <TouchableOpacity style={styles.loginButton}>
+        <TouchableOpacity onPress={()=>navigation.navigate('MainPage')} style={styles.loginButton}>
           <Text style={styles.loginText}>로그인</Text>
         </TouchableOpacity>
 

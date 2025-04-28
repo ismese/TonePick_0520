@@ -3,21 +3,27 @@ import React from 'react';
 import { View, Text, TextInput, TouchableOpacity, SafeAreaView } from 'react-native';
 import { styles } from './find_password_screen_style';
 import BeforeNavigator from '../../../navigations/BeforeNavigator';
+import { useNavigation } from '@react-navigation/native';
 
 const FindPasswordScreen = () => {
+  const navigation = useNavigation(); 
+
   return (
     <SafeAreaView style={styles.screen}> 
-        <TouchableOpacity
-          onPress={() => navigation.goBack()}
-          style={{
-            position: "relative",
-            top: 50,
-            left: 10,
-            zIndex: 10,
-          }}
-        >
-          <BeforeNavigator />
-        </TouchableOpacity>
+      <TouchableOpacity
+        style={{
+          position: "relative",
+          top: 50,
+          left: 10,
+          zIndex: 10,
+        }}
+      >
+        <BeforeNavigator 
+          onPress={() => navigation.goBack()} // ✅ 이제 오류 없음
+        />
+      </TouchableOpacity>
+
+
       <View style={styles.container}>
         <Text style={styles.title}>비밀번호 찾기</Text>
         <View style={styles.separator} />

@@ -3,21 +3,25 @@ import React from 'react';
 import { View, Text, TextInput, TouchableOpacity, SafeAreaView } from 'react-native';
 import { styles } from './find_id_screen_style';
 import BeforeNavigator from '../../../navigations/BeforeNavigator';
+import { useNavigation } from '@react-navigation/native';
 
 const FindIdScreen = () => {
+  const navigation = useNavigation(); // ✅ navigation 선언
+
   return (
     <SafeAreaView style={styles.screen}> 
-        <TouchableOpacity
+      <TouchableOpacity
+        style={{
+          position: "relative",
+          top: 50,
+          left: 10,
+          zIndex: 10,
+        }}
+      >
+        <BeforeNavigator 
           onPress={() => navigation.goBack()}
-          style={{
-            position: "relative",
-            top: 50,
-            left: 10,
-            zIndex: 10,
-          }}
-        >
-          <BeforeNavigator />
-        </TouchableOpacity>
+        />
+      </TouchableOpacity>
       <View style={styles.container}>
         <Text style={styles.title}>아이디 찾기</Text>
         <View style={styles.separator} />
