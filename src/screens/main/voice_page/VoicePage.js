@@ -4,8 +4,11 @@ import { SafeAreaView, View, Text, ScrollView, Image, TouchableOpacity } from 'r
 import { styles } from './voice_page_style';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { Audio } from 'expo-av';
+import { useNavigation } from '@react-navigation/native'; // 추가
 
 export default function VoicePage() {
+  const navigation = useNavigation(); // 추가
+
   const voiceList = [
     { name: '아빠님의 목소리', file: require('../../../../assets/voice.wav') },
     { name: '할머니님의 목소리', file: require('../../../../assets/voice.wav') },
@@ -49,10 +52,10 @@ export default function VoicePage() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>TOnePick</Text>
-        <TouchableOpacity style={styles.menuButton}>
+        <TouchableOpacity style={styles.menuButton} onPress={() => navigation.goBack()}>
           <Icon name="arrow-back-ios" size={18} color="#473B3B" />
         </TouchableOpacity>
+        <Text style={styles.title}>TOnePick</Text>
       </View>
 
       <View style={styles.section}>
@@ -93,11 +96,11 @@ export default function VoicePage() {
       </ScrollView>
 
       <View style={styles.bottomNav}>
-        <TouchableOpacity style={styles.navItem}>
+      <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('MainPage')}>
           <Icon name="home" size={26} color="#473B3B" />
           <Text style={styles.navLabelActive}>홈</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem}>
+        <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('ProfilePage')}>
           <Icon name="person" size={24} color="#A9A9A9" />
           <Text style={styles.navLabel}>내 정보</Text>
         </TouchableOpacity>

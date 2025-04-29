@@ -3,7 +3,7 @@ import React from 'react';
 import { View, Text, ScrollView, Image, TouchableOpacity, SafeAreaView, StatusBar } from 'react-native';
 import { styles } from './main_page_style';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-
+import { useNavigation } from '@react-navigation/native'; 
 
 const voiceNotes = [
   { name: '강양님의 목소리' },
@@ -20,6 +20,7 @@ const bookNotes = [
 ];
 
 export default function MainPage() {
+  const navigation = useNavigation(); 
   return (
     <SafeAreaView style={styles.safearea}>
       <StatusBar barStyle="dark-content" backgroundColor="#F7F8F9" />
@@ -27,18 +28,20 @@ export default function MainPage() {
       <View contentContainerStyle={styles.scrollContent}>
         {/* 헤더 */}
         <View style={styles.header}>
-            <Text style={styles.title}>TOnePick</Text>
-            <TouchableOpacity style={styles.menuButton}>
+          <Text style={styles.title}>TOnePick</Text>
+          <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('ListPage')}>
             <Image style={styles.menuIcon} source={require('../../../../assets/Icon Button.png')} />
-            </TouchableOpacity>
+          </TouchableOpacity>
         </View>
+
 
         {/* 보이스 노트 */}
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>보이스 노트</Text>
-            <TouchableOpacity>
-                <Text style={styles.seeMore}>더보기</Text>
-            </TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.navigate('VoicePage')}>
+        <Text style={styles.seeMore}>더보기</Text>
+        </TouchableOpacity>
+
         </View>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.voiceScroll}>
           {voiceNotes.map((item, index) => (
@@ -54,9 +57,9 @@ export default function MainPage() {
         {/* 북노트 */}
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>북노트</Text>
-          <TouchableOpacity>
-                <Text style={styles.seeMore}>더보기</Text>
-            </TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.navigate('FilePage')}>
+            <Text style={styles.seeMore}>더보기</Text>
+          </TouchableOpacity>
         </View>
 
         
@@ -86,7 +89,7 @@ export default function MainPage() {
             <Icon name="home" size={26} color="#473B3B" />
             <Text style={styles.navLabelActive}>홈</Text>
         </TouchableOpacity>
-            <TouchableOpacity style={styles.navItem}>
+        <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('ProfilePage')}>
                 <Icon name="person" size={24} color="#A9A9A9" />
                 <Text style={styles.navLabel}>내 정보</Text>
             </TouchableOpacity>

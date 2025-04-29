@@ -4,6 +4,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import { Audio } from 'expo-av';
 import { styles } from './file_detail_page_style';
 import Bookdetail from './Bookdetail';
+import { useNavigation } from '@react-navigation/native';
 
 const voiceList = [
   { name: '강양님의 목소리', file: require('../../../../assets/voice.wav') },
@@ -13,6 +14,7 @@ const voiceList = [
 ];
 
 export default function FileDetailPage() {
+  const navigation = useNavigation();
   const [sound, setSound] = useState(null);
   const [playingIndex, setPlayingIndex] = useState(null);
   const [progress, setProgress] = useState(0);
@@ -48,17 +50,14 @@ export default function FileDetailPage() {
   return (
         <SafeAreaView style={styles.container}>
         <View style={styles.header}>
-            <TouchableOpacity style={styles.backButton}>
-            <Icon name="arrow-back-ios" size={16} color="#473B3B" />
-            </TouchableOpacity>
+        <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+          <Icon name="arrow-back-ios" size={16} color="#473B3B" />
+        </TouchableOpacity>
             <Text style={styles.title}>BOOKNOTE</Text>
         </View>
 
         <View style={styles.subHeader}>
             <Text style={styles.sectionTitle}>보이스 선택</Text>
-            <TouchableOpacity>
-            <Text style={styles.close}>닫기</Text>
-            </TouchableOpacity>
         </View>
 
         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.voiceScroll}>
