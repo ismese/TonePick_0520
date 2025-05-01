@@ -126,4 +126,17 @@ progressRow: {
 	flex: 1,
 	backgroundColor: "#f7f8f9",
   },
+
+  backButton: {
+    position: "absolute",
+    left: 10,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+  },
+  
+  backIcon: {
+    fontSize: 20,
+    color: "#473B3B",
+  },
+  
 });

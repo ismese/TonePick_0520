@@ -54,24 +54,6 @@ export default function FilePage() {
           </TouchableOpacity>
         ))}
       </ScrollView>
-
-      {/* 하단 네비게이션 */}
-      
-      <View style={styles.bottomNav}>
-      <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('MainPage')}>
-          <Icon name="home" size={26} color="#473B3B" />
-          <Text style={styles.navLabelActive}>홈</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('ProfilePage')}>
-          <Icon name="person" size={24} color="#A9A9A9" />
-          <Text style={styles.navLabel}>내 정보</Text>
-        </TouchableOpacity>
-      </View>
-
-      {/* 플로팅 버튼 */}
-      <TouchableOpacity style={styles.fab}>
-        <Icon name="add" size={25} color="#ffffff" />
-      </TouchableOpacity>
     </SafeAreaView>
   );
 }

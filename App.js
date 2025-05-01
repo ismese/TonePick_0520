@@ -20,6 +20,9 @@ import ImportantVoicePage from './src/screens/voice/important_voice_page/Importa
 import DeletedVoicePage from './src/screens/voice/deleted_voice_page/DeletedVoicePage';
 import ImportantFilePage from './src/screens/file/important_file_page/ImportantFilePage';
 import DeletedFilePage from './src/screens/file/deleted_file_page/DeletedFilePage';
+import TermsScreen from './src/screens/terms/terms_screen/TermsScreen';
+import PermissionsScreen from './src/screens/terms/permissions_screen/PermissionsScreen'
+import RecordPage from './src/screens/record/RecordPage';
 const Stack = createNativeStackNavigator();
 
 const loadFonts = () => {
@@ -61,7 +64,10 @@ export default function App() {
         <Stack.Screen name="DeletedVoicePage" component={DeletedVoicePage} options={{ headerShown: false }} />
         <Stack.Screen name="ImportantFilePage" component={ImportantFilePage} options={{ headerShown: false }} />
         <Stack.Screen name="DeletedFilePage" component={DeletedFilePage} options={{ headerShown: false }} />
-
+        <Stack.Screen name="TermsScreen" component={TermsScreen} options={{ headerShown: false }} />
+        <Stack.Screen name="PermissionsScreen" component={PermissionsScreen} options={{ headerShown: false }} />
+        <Stack.Screen name="RecordPage" component={RecordPage} options={{ headerShown: false }} />
+        
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -57,9 +57,12 @@ const SignupScreen = () => {
           <TextInput style={styles.input} placeholder="전화번호를 입력하세요." keyboardType="phone-pad" placeholderTextColor="#C6C6C6" />
         </View>
 
-        <TouchableOpacity style={styles.submitButton}>
-          <Text style={styles.submitButtonText}>회원가입</Text>
-        </TouchableOpacity>
+        <TouchableOpacity 
+            style={styles.submitButton}
+            onPress={() => navigation.navigate('TermsScreen')}
+          >
+            <Text style={styles.submitButtonText}>회원가입</Text>
+          </TouchableOpacity>
       </View>
     </SafeAreaView>
   );

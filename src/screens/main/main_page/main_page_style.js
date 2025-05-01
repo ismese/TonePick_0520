@@ -199,4 +199,45 @@ export const styles = StyleSheet.create({
     height: 16,
     backgroundColor: '#F5F5F5',
   },
+  modalOverlay: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    backgroundColor: 'rgba(0, 0, 0, 0.4)',
+  },
+  modalContent: {
+    backgroundColor: '#ffffff',
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    paddingVertical: 36,
+    paddingHorizontal: 36,
+    paddingBottom: 60,
+  },
+  modalTitle: {
+    textAlign: 'center',
+    fontSize: 16,
+    fontFamily: 'Pretendard',
+    fontWeight: '700',
+    color: '#473B3B',
+    marginBottom: 25,
+  },
+  modalOptions: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+  },
+  modalButton: {
+    alignItems: 'center',
+  },
+  modalIcon: {
+    width: 30,
+    height: 30,
+    marginBottom: 10,
+    resizeMode: 'contain',
+  },
+  modalLabel: {
+    fontSize: 13,
+    fontFamily: 'Pretendard',
+    fontWeight: '500',
+    color: '#473B3B',
+  },
+
 });

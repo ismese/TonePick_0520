@@ -1,8 +1,11 @@
 import React from "react";
 import { View, Text, ScrollView, TouchableOpacity, SafeAreaView, StatusBar } from "react-native";
 import { styles } from "./record_page_style";
+import { useNavigation } from "@react-navigation/native";
 
 export default function RecordPage() {
+  const navigation = useNavigation();
+
   const handlePlay = (index) => {
     console.log(`녹음 파일 ${index + 1} 재생`);
     // 나중에 재생 기능 연결
@@ -12,9 +15,12 @@ export default function RecordPage() {
     <SafeAreaView style={styles.safeArea}>
       <StatusBar backgroundColor="#f7f8f9" barStyle="dark-content" />
       <View style={styles.screen}>
-        
-        {/* 상단 제목 */}
+
+        {/* 상단 제목 + 이전 버튼 */}
         <View style={styles.header}>
+          <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+            <Text style={styles.backIcon}>←</Text>
+          </TouchableOpacity>
           <Text style={styles.headerText}>RECORDING</Text>
         </View>
 
@@ -52,7 +58,7 @@ export default function RecordPage() {
             <Text style={styles.recordButtonText}>녹음하기</Text>
           </View>
         </View>
-        
+
       </View>
     </SafeAreaView>
   );
