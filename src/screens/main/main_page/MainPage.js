@@ -8,19 +8,13 @@ import {
   SafeAreaView,
   StatusBar,
   Modal,
+  Alert,
 } from 'react-native';
 import { styles } from './main_page_style';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useNavigation } from '@react-navigation/native';
 
-const voiceNotes = [
-  { name: '강양님의 목소리' },
-  { name: '마크님의 목소리' },
-  { name: '리쿠님의 목소리' },
-  { name: '성수님의 목소리' },
-];
-
-const bookNotes = [
+const initialBookNotes = [
   { title: '헨젤과 그레텔.pdf', date: '2025. 03. 24. 15:40' },
   { title: '엄마의 편지.pdf', date: '2025. 03. 24. 15:40' },
   { title: '살인자의 쇼핑몰.pdf', date: '2025. 03. 24. 15:40' },
@@ -30,6 +24,43 @@ const bookNotes = [
 export default function MainPage() {
   const navigation = useNavigation();
   const [showAddModal, setShowAddModal] = useState(false);
+  const [bookNotes, setBookNotes] = useState(initialBookNotes);
+  const [favorites, setFavorites] = useState(Array(initialBookNotes.length).fill(false));
+
+  const toggleFavorite = (index) => {
+    const updated = [...favorites];
+    updated[index] = !updated[index];
+    setFavorites(updated);
+  };
+  const voiceNotes = [
+    { name: '강양님의 목소리' },
+    { name: '마크님의 목소리' },
+    { name: '리쿠님의 목소리' },
+    { name: '성수님의 목소리' },
+  ];
+  
+  const handleDelete = (index) => {
+    Alert.alert(
+      '삭제 확인',
+      `'${bookNotes[index].title}' 파일을 삭제하시겠습니까?`,
+      [
+        { text: '취소', style: 'cancel' },
+        {
+          text: '삭제',
+          style: 'destructive',
+          onPress: () => {
+            const updatedList = [...bookNotes];
+            updatedList.splice(index, 1);
+            setBookNotes(updatedList);
+
+            const updatedFav = [...favorites];
+            updatedFav.splice(index, 1);
+            setFavorites(updatedFav);
+          },
+        },
+      ]
+    );
+  };
 
   return (
     <SafeAreaView style={styles.safearea}>
@@ -79,9 +110,18 @@ export default function MainPage() {
                   <Text style={styles.bookTitle}>{book.title}</Text>
                   <Text style={styles.bookDate}>{book.date}</Text>
                 </View>
-                <TouchableOpacity>
-                  <Icon name="more-vert" size={20} color="#A9A9A9" />
-                </TouchableOpacity>
+                <View style={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'space-between', height: 60 }}>
+                  <TouchableOpacity onPress={() => handleDelete(index)} style={{ marginBottom: 12 }}>
+                    <Icon name="more-vert" size={20} color="#A9A9A9" />
+                  </TouchableOpacity>
+                  <TouchableOpacity onPress={() => toggleFavorite(index)}>
+                    <Icon
+                      name={favorites[index] ? 'favorite' : 'favorite-border'}
+                      size={20}
+                      color={favorites[index] ? '#FF6B6B' : '#A9A9A9'}
+                    />
+                  </TouchableOpacity>
+                </View>
               </View>
             </TouchableOpacity>
           ))}
@@ -120,7 +160,7 @@ export default function MainPage() {
                 style={styles.modalButton}
                 onPress={() => {
                   setShowAddModal(false);
-                  navigation.navigate('RecordPage'); // 예시
+                  navigation.navigate('RecordPage');
                 }}
               >
                 <Image source={require('../../../../assets/mic.png')} style={styles.modalIcon} />
@@ -131,22 +171,11 @@ export default function MainPage() {
                 style={styles.modalButton}
                 onPress={() => {
                   setShowAddModal(false);
-                  navigation.navigate('FileUploadPage'); // 예시
+                  navigation.navigate('FilePage');
                 }}
               >
                 <Image source={require('../../../../assets/file.png')} style={styles.modalIcon} />
                 <Text style={styles.modalLabel}>파일</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={styles.modalButton}
-                onPress={() => {
-                  setShowAddModal(false);
-                  navigation.navigate('PdfPage'); // 예시
-                }}
-              >
-                <Image source={require('../../../../assets/pdf.png')} style={styles.modalIcon} />
-                <Text style={styles.modalLabel}>PDF</Text>
               </TouchableOpacity>
             </View>
           </View>

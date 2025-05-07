@@ -15,29 +15,31 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   headerText: {
-    fontSize: 16,
+    fontSize: 20,
     fontWeight: "800",
     color: "#473b3b",
+    fontFamily: "Pretendard-Bold",
   },
   titleSection: {
     width: "100%",
     paddingHorizontal: 30,
-    marginTop: 10,
+    marginTop: 30,
   },
   mainTitle: {
     fontSize: 20,
-    fontWeight: "700",
-    color: "#473b3b",
-    marginBottom: 5,
+    fontFamily: 'Pretendard-Bold',
+    color: '#473B3B',
+    lineHeight: 28,
   },
   subTitle: {
     fontSize: 14,
-    fontWeight: "600",
+    fontFamily: 'Pretendard-Bold',
     color: "#757575",
+    marginTop: 6,
   },
   recordList: {
     flex: 1,
-    width: "100%",
+    width: "103%",
     paddingHorizontal: 10,
     marginTop: 30,
   },
@@ -109,7 +111,7 @@ progressRow: {
     marginBottom: 10,
   },
   recordButtonLarge: {
-    width: 286,
+    width: 320,
     height: 40,
     backgroundColor: "#705F5F",
     borderRadius: 15,
@@ -118,7 +120,7 @@ progressRow: {
   },
   recordButtonText: {
     color: "#fff",
-    fontSize: 12,
+    fontSize: 16,
     fontWeight: "800",
   },
 
@@ -127,16 +129,54 @@ progressRow: {
 	backgroundColor: "#f7f8f9",
   },
 
-  backButton: {
-    position: "absolute",
-    left: 10,
-    paddingHorizontal: 10,
-    paddingVertical: 5,
+  modalOverlay: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    backgroundColor: 'rgba(0, 0, 0, 0.3)',
   },
   
-  backIcon: {
-    fontSize: 20,
-    color: "#473B3B",
+  modalContent: {
+    backgroundColor: '#fff',
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    paddingVertical: 30,
+    paddingHorizontal: 20,
+    alignItems: 'center',
   },
+  
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 8,
+    color: '#000',
+  },
+  
+  modalSubtitle: {
+    fontSize: 14,
+    color: '#666',
+    marginBottom: 12,
+  },
+  
+  modalText: {
+    fontSize: 16,
+    color: '#222',
+    textAlign: 'center',
+    marginBottom: 20,
+  },
+  
+  waveform: {
+    height: 40,
+    width: '100%',
+    backgroundColor: '#FEE',
+    borderRadius: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  
+  modalClose: {
+    fontSize: 14,
+    color: '#007AFF',
+  }
   
 });

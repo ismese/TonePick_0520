@@ -1,12 +1,28 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import * as Sharing from 'expo-sharing';
 
+export default function Bookdetail({ pdfUri }) {
+  const openPDF = async (uri) => {
+    const canShare = await Sharing.isAvailableAsync();
+    if (canShare) {
+      await Sharing.shareAsync(uri);
+    } else {
+      alert('이 디바이스에서는 PDF를 열 수 없습니다.');
+    }
+  };
 
-export default function Bookdetail({ title, date, onPressMore }) {
   return (
     <View style={styles.card}>
-      <View style={styles.info}>
-      </View>
+      {pdfUri ? (
+        <TouchableOpacity onPress={() => openPDF(pdfUri)} style={{ padding: 16 }}>
+          <Text style={{ color: '#007AFF', textAlign: 'center', fontWeight: 'bold' }}>
+            PDF 열기
+          </Text>
+        </TouchableOpacity>
+      ) : (
+        <Text style={{ textAlign: 'center', color: '#999' }}>PDF가 없습니다.</Text>
+      )}
     </View>
   );
 }
@@ -19,8 +35,6 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     padding: 10,
     marginBottom: 10,
-    flexDirection: 'row',
-    alignItems: 'center',
     shadowColor: '#000',
     shadowOffset: { width: 4, height: 4 },
     shadowOpacity: 0.1,

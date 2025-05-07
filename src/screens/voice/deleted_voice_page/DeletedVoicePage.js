@@ -1,6 +1,14 @@
 // DeletedVoicePage.js
 import React, { useState, useEffect } from 'react';
-import { SafeAreaView, View, Text, ScrollView, Image, TouchableOpacity } from 'react-native';
+import {
+  SafeAreaView,
+  View,
+  Text,
+  ScrollView,
+  Image,
+  TouchableOpacity,
+  Alert,
+} from 'react-native';
 import { styles } from './deleted_voice_page_style';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { Audio } from 'expo-av';
@@ -9,16 +17,17 @@ import { useNavigation } from '@react-navigation/native';
 export default function DeletedVoicePage() {
   const navigation = useNavigation();
 
-  const voiceList = [
+  const [voiceList, setVoiceList] = useState([
     { name: '삭제된 목소리 1', file: require('../../../../assets/voice.wav') },
     { name: '삭제된 목소리 2', file: require('../../../../assets/voice.wav') },
     { name: '삭제된 목소리 3', file: require('../../../../assets/voice.wav') },
     { name: '삭제된 목소리 4', file: require('../../../../assets/voice.wav') },
-  ];
+  ]);
 
   const [sound, setSound] = useState(null);
   const [playingIndex, setPlayingIndex] = useState(null);
   const [progress, setProgress] = useState({});
+  const [favorites, setFavorites] = useState(Array(4).fill(false));
 
   useEffect(() => {
     let interval;
@@ -45,6 +54,35 @@ export default function DeletedVoicePage() {
     setSound(newSound);
     setPlayingIndex(index);
     await newSound.playAsync();
+  };
+
+  const toggleFavorite = (index) => {
+    const updated = [...favorites];
+    updated[index] = !updated[index];
+    setFavorites(updated);
+  };
+
+  const handleDelete = (index) => {
+    Alert.alert(
+      '삭제 확인',
+      `'${voiceList[index].name}' 보이스를 영원히 삭제하시겠습니까?`,
+      [
+        { text: '취소', style: 'cancel' },
+        {
+          text: '삭제',
+          style: 'destructive',
+          onPress: () => {
+            const updatedList = [...voiceList];
+            updatedList.splice(index, 1);
+            setVoiceList(updatedList);
+
+            const updatedFav = [...favorites];
+            updatedFav.splice(index, 1);
+            setFavorites(updatedFav);
+          },
+        },
+      ]
+    );
   };
 
   return (
@@ -79,20 +117,23 @@ export default function DeletedVoicePage() {
             </View>
 
             <View style={styles.cardIcons}>
-              <TouchableOpacity>
-                <Icon name="favorite" size={20} color="#AEAEAE" />
+              <TouchableOpacity onPress={() => toggleFavorite(index)}>
+                <Icon
+                  name={favorites[index] ? 'favorite' : 'favorite-border'}
+                  size={20}
+                  color={favorites[index] ? '#FF6B6B' : '#AEAEAE'}
+                />
               </TouchableOpacity>
               <TouchableOpacity onPress={() => playVoice(voice.file, index)}>
                 <Icon name="play-arrow" size={24} color="#1D1B20" />
               </TouchableOpacity>
-              <TouchableOpacity>
+              <TouchableOpacity onPress={() => handleDelete(index)}>
                 <Icon name="more-vert" size={20} color="#AEAEAE" />
               </TouchableOpacity>
             </View>
           </View>
         ))}
       </ScrollView>
-
     </SafeAreaView>
   );
 }

@@ -146,4 +146,23 @@ export const styles = StyleSheet.create({
     fontFamily: 'Pretendard',
     fontWeight: '500',
   },
+  addButton: {
+    width: 66,
+    height: 66,
+    backgroundColor: '#705F5F',
+    borderRadius: 100,
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'absolute',
+    bottom: 48,
+    alignSelf: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    borderWidth: 4,
+    borderColor: 'white',
+    zIndex: 10,
+  },
+  
 });

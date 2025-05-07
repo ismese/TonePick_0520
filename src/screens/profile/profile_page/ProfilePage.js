@@ -23,8 +23,10 @@ const ProfilePage = () => {
           <Text style={styles.profileName}>강양</Text>
           <Text style={styles.profileId}>wlsdud1104</Text>
         </View>
-        <Text style={styles.arrow}>›</Text>
+        {/* 기존: <Text style={styles.arrow}>›</Text> */}
+        <Icon name="chevron-right" size={24} color="#473B3B" />
       </TouchableOpacity>
+
 
       {/* 실선 구분 */}
       <View style={styles.divider} />
@@ -65,10 +67,7 @@ const ProfilePage = () => {
         </TouchableOpacity>
       </View>
 
-      {/* 플로팅 버튼 */}
-      <TouchableOpacity style={styles.fab}>
-        <Icon name="add" size={25} color="#ffffff" />
-      </TouchableOpacity>
+      
     </SafeAreaView>
   );
 };

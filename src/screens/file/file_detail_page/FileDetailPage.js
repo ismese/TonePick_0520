@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect} from 'react';
 import { View, Text, ScrollView, Image, TouchableOpacity, SafeAreaView } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { Audio } from 'expo-av';
 import { styles } from './file_detail_page_style';
 import Bookdetail from './Bookdetail';
 import { useNavigation } from '@react-navigation/native';
+import { useRoute } from '@react-navigation/native';
 
 const voiceList = [
   { name: '강양님의 목소리', file: require('../../../../assets/voice.wav') },
@@ -18,6 +19,9 @@ export default function FileDetailPage() {
   const [sound, setSound] = useState(null);
   const [playingIndex, setPlayingIndex] = useState(null);
   const [progress, setProgress] = useState(0);
+
+  const route = useRoute(); // ← import 필요
+  const { pdfUri} = route.params || {};
 
   const playVoice = async (file, index) => {
     if (sound) {
@@ -76,7 +80,7 @@ export default function FileDetailPage() {
         </ScrollView>
 
         <ScrollView vertical showsHorizontalScrollIndicator={false} style={styles.bookContainer}>
-            <Bookdetail> </Bookdetail>
+          <Bookdetail pdfUri={pdfUri} />
         </ScrollView>
         
         </SafeAreaView>

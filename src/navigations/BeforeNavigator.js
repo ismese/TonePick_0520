@@ -4,7 +4,7 @@ import { Ionicons } from "@expo/vector-icons";
 const BeforeNavigator = ({ onPress }) => {
   return (
     <TouchableOpacity style={styles.button} onPress={onPress}>
-      <Ionicons name="arrow-back" size={24} color="black" />
+      <Ionicons name="arrow-back" size={22} color="black" />
       
     </TouchableOpacity>
   );
@@ -12,7 +12,7 @@ const BeforeNavigator = ({ onPress }) => {
 
 const styles = StyleSheet.create({
   button: {
-    position: "center",
+    position: "relative",
     top: 0, 
     left: 10, 
     padding: 5,

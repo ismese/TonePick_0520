@@ -1,6 +1,6 @@
 // ImportantFilePage.js
-import React from 'react';
-import { SafeAreaView, View, Text, ScrollView, TouchableOpacity } from 'react-native';
+import React, { useState } from 'react';
+import { SafeAreaView, View, Text, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import { styles } from './important_file_page_style';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useNavigation } from '@react-navigation/native';
@@ -8,10 +8,42 @@ import { useNavigation } from '@react-navigation/native';
 export default function ImportantFilePage() {
   const navigation = useNavigation();
 
-  const bookNote = [
+  const initialBookNote = [
     { title: '헨젤과 그레텔.pdf', date: '2025. 03. 24. 15:40' },
     { title: '엄마의 편지.pdf', date: '2025. 03. 24. 15:40' },
   ];
+
+  const [bookNote, setBookNote] = useState(initialBookNote);
+  const [favorites, setFavorites] = useState(Array(initialBookNote.length).fill(false));
+
+  const toggleFavorite = (index) => {
+    const updated = [...favorites];
+    updated[index] = !updated[index];
+    setFavorites(updated);
+  };
+
+  const handleDelete = (index) => {
+    Alert.alert(
+      '삭제 확인',
+      `'${bookNote[index].title}' 파일을 삭제하시겠습니까?`,
+      [
+        { text: '취소', style: 'cancel' },
+        {
+          text: '삭제',
+          style: 'destructive',
+          onPress: () => {
+            const updatedList = [...bookNote];
+            updatedList.splice(index, 1);
+            setBookNote(updatedList);
+
+            const updatedFav = [...favorites];
+            updatedFav.splice(index, 1);
+            setFavorites(updatedFav);
+          },
+        },
+      ]
+    );
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -39,9 +71,22 @@ export default function ImportantFilePage() {
                 <Text style={styles.bookTitle}>{book.title}</Text>
                 <Text style={styles.bookDate}>{book.date}</Text>
               </View>
-              <TouchableOpacity>
-                <Icon name="more-vert" size={20} color="#A9A9A9" />
-              </TouchableOpacity>
+
+              <View style={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'space-between', height: 60 }}>
+                {/* 삭제 버튼 */}
+                <TouchableOpacity onPress={() => handleDelete(index)} style={{ marginBottom: 12 }}>
+                  <Icon name="more-vert" size={20} color="#A9A9A9" />
+                </TouchableOpacity>
+
+                {/* 찜 버튼 */}
+                <TouchableOpacity onPress={() => toggleFavorite(index)}>
+                  <Icon
+                    name={favorites[index] ? 'favorite' : 'favorite-border'}
+                    size={20}
+                    color={favorites[index] ? '#FF6B6B' : '#A9A9A9'}
+                  />
+                </TouchableOpacity>
+              </View>
             </View>
           </TouchableOpacity>
         ))}

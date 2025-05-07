@@ -1,9 +1,7 @@
-import { StyleSheet } from "react-native";
-
-const styles = StyleSheet.create({
+const styles = {
   safearea: {
     flex: 1,
-    backgroundColor: '#EBE9E9',
+    backgroundColor: '#ffffff',
   },
   header: {
     height: 60,
@@ -13,7 +11,7 @@ const styles = StyleSheet.create({
   },
   title: {
     color: '#473B3B',
-    fontSize: 22,
+    fontSize: 20,
     fontFamily: 'Pretendard',
     fontWeight: '800',
     lineHeight: 30,
@@ -25,13 +23,9 @@ const styles = StyleSheet.create({
     padding: 15,
     flexDirection: "row",
     alignItems: "center",
-    marginTop: 20,
-    backgroundColor: "#FFFFFF",
-    borderRadius: 20,
-    shadowColor: "#000",
-    shadowOffset: { width: 4, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
+    marginTop: 5,
+    backgroundColor: "#ffffff",
+    
   },
   profileImage: {
     width: 70,
@@ -66,16 +60,18 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     height: 1,
     backgroundColor: "#ddd",
-    marginVertical: 20,
+    marginVertical: 8,
+    marginBottom: 25,
   },
   menuList: {
     width: "90%",
     alignSelf: "center",
+    paddingVertical: 10,
   },
   menuItem: {
     fontSize: 16,
     color: "#646464",
-    marginBottom: 12,
+    marginBottom: 28,
     paddingLeft: 10,
     fontFamily: "Pretendard",
     lineHeight: 25, 
@@ -99,33 +95,15 @@ const styles = StyleSheet.create({
     fontSize: 10,
     fontFamily: 'Pretendard',
     fontWeight: '500',
-    lineHeight: 20, // ✨ 추가: 하단 네비 텍스트도 약간 여유
+    lineHeight: 20, 
   },
   navLabel: {
     color: '#CCD0D7',
     fontSize: 10,
     fontFamily: 'Pretendard',
     fontWeight: '500',
-    lineHeight: 20, // ✨ 추가: 하단 네비 텍스트도 약간 여유
+    lineHeight: 20, 
   },
-  fab: {
-    width: 66,
-    height: 66,
-    backgroundColor: '#705F5F',
-    borderRadius: 100,
-    justifyContent: 'center',
-    alignItems: 'center',
-    position: 'absolute',
-    bottom: 48,
-    alignSelf: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    borderWidth: 4,
-    borderColor: 'white',
-    zIndex: 10,
-  },
-});
+};
 
 export default styles;

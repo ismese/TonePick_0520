@@ -1,6 +1,6 @@
 // DeletedFilePage.js
-import React from 'react';
-import { SafeAreaView, View, Text, ScrollView, TouchableOpacity } from 'react-native';
+import React, { useState } from 'react';
+import { SafeAreaView, View, Text, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import { styles } from './deleted_file_page_style';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useNavigation } from '@react-navigation/native';
@@ -8,11 +8,43 @@ import { useNavigation } from '@react-navigation/native';
 export default function DeletedFilePage() {
   const navigation = useNavigation();
 
-  const deletedBookNote = [
+  const initialDeletedBookNote = [
     { title: '슬기로운 의사 생활.pdf', date: '2025. 03. 24. 15:40' },
     { title: '폭삭 속았수다.pdf', date: '2025. 04. 29. 15:40' },
     { title: '진영의 거인.pdf', date: '2026. 03. 24. 15:40' },
   ];
+
+  const [deletedBookNote, setDeletedBookNote] = useState(initialDeletedBookNote);
+  const [favorites, setFavorites] = useState(Array(initialDeletedBookNote.length).fill(false));
+
+  const toggleFavorite = (index) => {
+    const updated = [...favorites];
+    updated[index] = !updated[index];
+    setFavorites(updated);
+  };
+
+  const handleDelete = (index) => {
+    Alert.alert(
+      '삭제 확인',
+      `'${deletedBookNote[index].title}' 파일을 완전히 삭제하시겠습니까?`,
+      [
+        { text: '취소', style: 'cancel' },
+        {
+          text: '삭제',
+          style: 'destructive',
+          onPress: () => {
+            const updatedList = [...deletedBookNote];
+            updatedList.splice(index, 1);
+            setDeletedBookNote(updatedList);
+
+            const updatedFav = [...favorites];
+            updatedFav.splice(index, 1);
+            setFavorites(updatedFav);
+          },
+        },
+      ]
+    );
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -40,9 +72,18 @@ export default function DeletedFilePage() {
                 <Text style={styles.bookTitle}>{book.title}</Text>
                 <Text style={styles.bookDate}>{book.date}</Text>
               </View>
-              <TouchableOpacity>
-                <Icon name="more-vert" size={20} color="#A9A9A9" />
-              </TouchableOpacity>
+              <View style={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'space-between', height: 60 }}>
+                <TouchableOpacity onPress={() => handleDelete(index)} style={{ marginBottom: 12 }}>
+                  <Icon name="more-vert" size={20} color="#A9A9A9" />
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => toggleFavorite(index)}>
+                  <Icon
+                    name={favorites[index] ? 'favorite' : 'favorite-border'}
+                    size={20}
+                    color={favorites[index] ? '#FF6B6B' : '#A9A9A9'}
+                  />
+                </TouchableOpacity>
+              </View>
             </View>
           </TouchableOpacity>
         ))}
