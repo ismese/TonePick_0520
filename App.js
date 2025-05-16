@@ -21,8 +21,11 @@ import DeletedVoicePage from './src/screens/voice/deleted_voice_page/DeletedVoic
 import ImportantFilePage from './src/screens/file/important_file_page/ImportantFilePage';
 import DeletedFilePage from './src/screens/file/deleted_file_page/DeletedFilePage';
 import TermsScreen from './src/screens/terms/terms_screen/TermsScreen';
-import PermissionsScreen from './src/screens/terms/permissions_screen/PermissionsScreen'
+import PermissionsScreen from './src/screens/terms/permissions_screen/PermissionsScreen';
 import RecordPage from './src/screens/record/RecordPage';
+import PdfPage from './src/screens/main/main_page/PdfPage/PdfPage'; // ✅ 추가
+import { BookNoteProvider } from './src/context/BookNoteContext'; // ✅ 추가
+
 const Stack = createNativeStackNavigator();
 
 const loadFonts = () => {
@@ -46,29 +49,31 @@ export default function App() {
   }
 
   return (
-    <NavigationContainer>
-      <Stack.Navigator initialRouteName="Signin">
-        <Stack.Screen name="Signin" component={SigninScreen} options={{ headerShown: false }} />
-        <Stack.Screen name="Signup" component={SignupScreen} options={{ headerShown: false }} />
-        <Stack.Screen name="ChangeIdScreen" component={ChangeIdScreen} options={{ headerShown: false }} />
-        <Stack.Screen name="ChangePasswordScreen" component={ChangePasswordScreen} options={{ headerShown: false }} />
-        <Stack.Screen name="FindId" component={FindIdScreen} options={{ headerShown: false }} />
-        <Stack.Screen name="FindPw" component={FindPasswordScreen} options={{ headerShown: false }} />
-        <Stack.Screen name="MainPage" component={MainPage} options={{ headerShown: false }} />
-        <Stack.Screen name="VoicePage" component={VoicePage} options={{ headerShown: false }} />
-        <Stack.Screen name="FilePage" component={FilePage} options={{ headerShown: false }} />
-        <Stack.Screen name="FileDetailPage" component={FileDetailPage} options={{ headerShown: false }} />
-        <Stack.Screen name="ListPage" component={ListPage} options={{ headerShown: false }} />
-        <Stack.Screen name="ProfilePage" component={ProfilePage} options={{ headerShown: false }} />
-        <Stack.Screen name="ImportantVoicePage" component={ImportantVoicePage} options={{ headerShown: false }} />
-        <Stack.Screen name="DeletedVoicePage" component={DeletedVoicePage} options={{ headerShown: false }} />
-        <Stack.Screen name="ImportantFilePage" component={ImportantFilePage} options={{ headerShown: false }} />
-        <Stack.Screen name="DeletedFilePage" component={DeletedFilePage} options={{ headerShown: false }} />
-        <Stack.Screen name="TermsScreen" component={TermsScreen} options={{ headerShown: false }} />
-        <Stack.Screen name="PermissionsScreen" component={PermissionsScreen} options={{ headerShown: false }} />
-        <Stack.Screen name="RecordPage" component={RecordPage} options={{ headerShown: false }} />
-        
-      </Stack.Navigator>
-    </NavigationContainer>
+    <BookNoteProvider>
+      <NavigationContainer>
+        <Stack.Navigator initialRouteName="Signin">
+          <Stack.Screen name="Signin" component={SigninScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="Signup" component={SignupScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="ChangeIdScreen" component={ChangeIdScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="ChangePasswordScreen" component={ChangePasswordScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="FindId" component={FindIdScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="FindPw" component={FindPasswordScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="MainPage" component={MainPage} options={{ headerShown: false }} />
+          <Stack.Screen name="VoicePage" component={VoicePage} options={{ headerShown: false }} />
+          <Stack.Screen name="FilePage" component={FilePage} options={{ headerShown: false }} />
+          <Stack.Screen name="FileDetailPage" component={FileDetailPage} options={{ headerShown: false }} />
+          <Stack.Screen name="ListPage" component={ListPage} options={{ headerShown: false }} />
+          <Stack.Screen name="ProfilePage" component={ProfilePage} options={{ headerShown: false }} />
+          <Stack.Screen name="ImportantVoicePage" component={ImportantVoicePage} options={{ headerShown: false }} />
+          <Stack.Screen name="DeletedVoicePage" component={DeletedVoicePage} options={{ headerShown: false }} />
+          <Stack.Screen name="ImportantFilePage" component={ImportantFilePage} options={{ headerShown: false }} />
+          <Stack.Screen name="DeletedFilePage" component={DeletedFilePage} options={{ headerShown: false }} />
+          <Stack.Screen name="TermsScreen" component={TermsScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="PermissionsScreen" component={PermissionsScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="RecordPage" component={RecordPage} options={{ headerShown: false }} />
+          <Stack.Screen name="PdfPage" component={PdfPage} options={{ headerShown: false }} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </BookNoteProvider>
   );
 }

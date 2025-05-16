@@ -1,10 +1,21 @@
 {
   "expo": {
+    "name": "exporoute",
+    "slug": "exporoute",
     "scheme": "acme",
     "plugins": [
       "expo-font"
     ],
-    "name": "exporoute",
-    "slug": "exporoute"
+    "extra": {
+      "eas": {
+        "projectId": "01fb4b95-1d14-4d67-ad49-7bf6d3a290b8"
+      }
+    },
+    "ios": {
+      "bundleIdentifier": "com.ismse2664.exporoute",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
+    }
   }
 }

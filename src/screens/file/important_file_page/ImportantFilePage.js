@@ -1,25 +1,73 @@
-// ImportantFilePage.js
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { SafeAreaView, View, Text, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import { styles } from './important_file_page_style';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function ImportantFilePage() {
   const navigation = useNavigation();
+  const [bookNote, setBookNote] = useState([]);
+  const [favorites, setFavorites] = useState([]);
 
-  const initialBookNote = [
-    { title: '헨젤과 그레텔.pdf', date: '2025. 03. 24. 15:40' },
-    { title: '엄마의 편지.pdf', date: '2025. 03. 24. 15:40' },
-  ];
+  useEffect(() => {
+    const fetchImportantNotes = async () => {
+      try {
+        const uid = await AsyncStorage.getItem('userUid');
+        const response = await fetch(
+          `https://firestore.googleapis.com/v1/projects/tonpick-7e5d2/databases/(default)/documents/pdfFiles`
+        );
+        const data = await response.json();
+        if (!data.documents) return;
 
-  const [bookNote, setBookNote] = useState(initialBookNote);
-  const [favorites, setFavorites] = useState(Array(initialBookNote.length).fill(false));
+        const important = data.documents
+          .map(doc => {
+            const fields = doc.fields;
+            return {
+              title: fields.title?.stringValue || '',
+              date: fields.createdAt?.timestampValue || '',
+              uri: fields.uri?.stringValue || '',
+              uid: fields.uid?.stringValue || '',
+              name: doc.name,
+              isFavorite: fields.isFavorite?.booleanValue || false,
+            };
+          })
+          .filter(item => item.uid === uid && item.isFavorite);
 
-  const toggleFavorite = (index) => {
+        setBookNote(important);
+        setFavorites(important.map(item => item.isFavorite));
+      } catch (err) {
+        console.error('중요 보드 불러오기 실패:', err);
+      }
+    };
+
+    fetchImportantNotes();
+  }, []);
+
+  const toggleFavorite = async (index) => {
     const updated = [...favorites];
     updated[index] = !updated[index];
     setFavorites(updated);
+
+    const item = bookNote[index];
+    try {
+      await fetch(`https://firestore.googleapis.com/v1/${item.name}?updateMask.fieldPaths=isFavorite`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          fields: {
+            isFavorite: { booleanValue: updated[index] },
+          },
+        }),
+      });
+
+      // 업데이트 후 목록 갱신
+      setBookNote(prev =>
+        prev.filter((_, i) => i === index ? updated[i] : true)
+      );
+    } catch (err) {
+      Alert.alert('오류', '즐겨찾기 상태 변경 실패');
+    }
   };
 
   const handleDelete = (index) => {
@@ -32,13 +80,13 @@ export default function ImportantFilePage() {
           text: '삭제',
           style: 'destructive',
           onPress: () => {
-            const updatedList = [...bookNote];
-            updatedList.splice(index, 1);
-            setBookNote(updatedList);
+            const updated = [...bookNote];
+            updated.splice(index, 1);
+            setBookNote(updated);
 
-            const updatedFav = [...favorites];
-            updatedFav.splice(index, 1);
-            setFavorites(updatedFav);
+            const favs = [...favorites];
+            favs.splice(index, 1);
+            setFavorites(favs);
           },
         },
       ]
@@ -47,7 +95,6 @@ export default function ImportantFilePage() {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* 상단 헤더 */}
       <View style={styles.header}>
         <TouchableOpacity style={styles.menuButton} onPress={() => navigation.goBack()}>
           <Icon name="arrow-back-ios" size={18} color="#473B3B" />
@@ -55,16 +102,17 @@ export default function ImportantFilePage() {
         <Text style={styles.title}>TOnePick</Text>
       </View>
 
-      {/* 섹션 제목 */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>중요 북 노트</Text>
         <Text style={styles.sectionDesc}>당신이 중요하게 생각하는 노트를 담아봤어요.</Text>
       </View>
 
-      {/* 북노트 리스트 */}
       <ScrollView style={styles.bookcontainer}>
         {bookNote.map((book, index) => (
-          <TouchableOpacity key={index} onPress={() => navigation.navigate('FileDetailPage')}>
+          <TouchableOpacity key={index} onPress={() => navigation.navigate('FileDetailPage', {
+            pdfUri: book.uri,
+            pdfName: book.title,
+          })}>
             <View style={styles.bookCard}>
               <View style={styles.bookInfo}>
                 <Text style={styles.bookLabel}>PDF</Text>
@@ -73,12 +121,10 @@ export default function ImportantFilePage() {
               </View>
 
               <View style={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'space-between', height: 60 }}>
-                {/* 삭제 버튼 */}
                 <TouchableOpacity onPress={() => handleDelete(index)} style={{ marginBottom: 12 }}>
                   <Icon name="more-vert" size={20} color="#A9A9A9" />
                 </TouchableOpacity>
 
-                {/* 찜 버튼 */}
                 <TouchableOpacity onPress={() => toggleFavorite(index)}>
                   <Icon
                     name={favorites[index] ? 'favorite' : 'favorite-border'}

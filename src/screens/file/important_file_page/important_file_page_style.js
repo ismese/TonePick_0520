@@ -2,6 +2,10 @@
 import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
+  safearea: { // 오류 방지용 SafeAreaView 스타일 추가
+    flex: 1,
+    backgroundColor: '#FFFFFF',
+  },
   container: {
     flex: 1,
     backgroundColor: '#EBE9E9',
