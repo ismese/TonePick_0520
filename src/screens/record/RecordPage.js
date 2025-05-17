@@ -1,16 +1,26 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, SafeAreaView, StatusBar,Modal} from "react-native";
-import { styles } from "./record_page_style";
-import { useNavigation } from "@react-navigation/native";
+import {
+  View,
+  Text,
+  ScrollView,
+  TouchableOpacity,
+  SafeAreaView,
+  StatusBar,
+  Modal,
+  Alert,
+} from 'react-native';
+import { styles } from './record_page_style';
+import { useNavigation } from '@react-navigation/native';
 import { Audio } from 'expo-av';
 import BeforeNavigator from '../../navigations/BeforeNavigator';
-
+import { uploadVoiceClone } from './uploadVoiceClone';
 
 
 export default function RecordPage() {
   const navigation = useNavigation();
   const [recording, setRecording] = useState(null);
   const [isRecordingModalVisible, setRecordingModalVisible] = useState(false);
+  const [recordedUris, setRecordedUris] = useState([]);
 
   const startRecording = async () => {
     try {
@@ -37,6 +47,7 @@ export default function RecordPage() {
       await recording.stopAndUnloadAsync();
       const uri = recording.getURI();
       console.log('녹음 파일 저장됨:', uri);
+      setRecordedUris(prev => [...prev, uri]);
       await sendToTTSModel(uri);
       setRecording(null);
       setRecordingModalVisible(false);
@@ -47,7 +58,17 @@ export default function RecordPage() {
 
   const sendToTTSModel = async (audioUri) => {
     console.log('📤 TTS 모델에 전송 준비:', audioUri);
-    // 여기에 실제 API 연동 로직 추가 가능
+    // 필요 시 API 업로드 로직 추가
+  };
+
+  const playRecording = async (uri) => {
+    try {
+      const { sound } = await Audio.Sound.createAsync({ uri });
+      await sound.playAsync();
+    } catch (err) {
+      console.error('재생 실패:', err);
+      Alert.alert('재생 오류', '녹음 파일을 재생할 수 없습니다.');
+    }
   };
 
   return (
@@ -55,7 +76,6 @@ export default function RecordPage() {
       <StatusBar backgroundColor="#f7f8f9" barStyle="dark-content" />
       <View style={styles.screen}>
         <View style={styles.header}>
-          
           <BeforeNavigator onPress={() => navigation.goBack()} />
           <View style={{ flex: 1, alignItems: 'center', marginRight: 30 }}>
             <Text style={styles.headerText}>RECORDING</Text>
@@ -69,34 +89,59 @@ export default function RecordPage() {
 
         <ScrollView style={styles.recordList} showsVerticalScrollIndicator={false}>
           {Array.from({ length: 7 }, (_, index) => (
-            <TouchableOpacity style={styles.recordItem} key={index}>
+            <View style={styles.recordItem} key={index}>
               <Text style={styles.recordText}>녹음 파일 {index + 1}</Text>
-              <View style={styles.playButton}>
+              <TouchableOpacity
+                style={styles.playButton}
+                onPress={() => {
+                  if (recordedUris[index]) {
+                    playRecording(recordedUris[index]);
+                  } else {
+                    Alert.alert('알림', '녹음된 파일이 없습니다.');
+                  }
+                }}
+              >
                 <Text style={styles.playIcon}>▶</Text>
-              </View>
-            </TouchableOpacity>
+              </TouchableOpacity>
+            </View>
           ))}
         </ScrollView>
 
         <View style={styles.progressSection}>
           <View style={styles.progressRow}>
-            <Text style={styles.progressText}>18%</Text>
+            <Text style={styles.progressText}>
+              {Math.min(100, Math.round((recordedUris.length / 7) * 100))}%
+            </Text>
             <View style={styles.progressBarBackground}>
-              <View style={styles.progressBarFill} />
+              <View
+                style={[
+                  styles.progressBarFill,
+                  { width: `${(recordedUris.length / 7) * 100}%` },
+                ]}
+              />
             </View>
           </View>
         </View>
 
         <View style={styles.footer}>
-          <TouchableOpacity
-            style={styles.recordButtonLarge}
-            onPress={() => {
-              setRecordingModalVisible(true);
-              startRecording();
-            }}
-          >
-            <Text style={styles.recordButtonText}>녹음하기</Text>
-          </TouchableOpacity>
+          {recordedUris.length < 7 ? (
+            <TouchableOpacity
+              style={styles.recordButtonLarge}
+              onPress={() => {
+                setRecordingModalVisible(true);
+                startRecording();
+              }}
+            >
+              <Text style={styles.recordButtonText}>녹음하기</Text>
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity
+              style={styles.recordButtonLarge}
+              onPress={() => uploadVoiceClone(recordedUris)}
+            >
+              <Text style={styles.recordButtonText}>내 목소리 만들기</Text>
+            </TouchableOpacity>
+          )}
         </View>
 
         <Modal
@@ -125,7 +170,6 @@ export default function RecordPage() {
                   {recording ? '중지하기' : '녹음 시작'}
                 </Text>
               </TouchableOpacity>
-
             </View>
           </View>
         </Modal>
