@@ -30,6 +30,7 @@ export default function FilePage() {
               title: fields.title.stringValue,
               date: fields.createdAt.timestampValue,
               uri: fields.uri.stringValue,
+              uri2: fields.uri2?.stringValue || '',
               name: doc.name,
               uid: fields.uid?.stringValue || null,
               default: fields.default?.booleanValue || false,
@@ -83,6 +84,20 @@ export default function FilePage() {
     );
   };
 
+  const handleExtractText = async (cloudUrl) => {
+    try {
+      const res = await fetch('http://10.20.66.16:5000/pdf-to-text', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url: cloudUrl }),
+      });
+      const data = await res.json();
+      Alert.alert('📄 텍스트 추출 결과', data.text || '추출된 내용이 없습니다.');
+    } catch (err) {
+      Alert.alert('❌ 오류', '텍스트 추출 중 문제가 발생했습니다.');
+    }
+  };
+
   const handleAddFile = async () => {
     const result = await DocumentPicker.getDocumentAsync({ type: 'application/pdf' });
 
@@ -111,35 +126,61 @@ export default function FilePage() {
 
       <ScrollView style={styles.bookcontainer} contentContainerStyle={{ paddingBottom: 100 }}>
         {bookNote.map((book, index) => (
-          <TouchableOpacity 
-            key={index} 
-            onPress={() => navigation.navigate('FileDetailPage', { pdfUri: book.uri, pdfName: book.title })} // ✅ PDF 클릭 시 상세 보기 화면으로 이동
-          >
-            <View style={styles.bookCard}>
-              <View style={styles.bookInfo}>
-                <Text style={styles.bookLabel}>PDF</Text>
-                <Text style={styles.bookTitle}>{book.title}</Text>
-                <Text style={styles.bookDate}>{book.date}</Text>
-              </View>
+          <View key={index}>
+            <TouchableOpacity
+              onPress={() =>
+                navigation.navigate('FileDetailPage', {
+                  pdfUri: book.uri,
+                  pdfName: book.title,
+                  pdfUri2: book.uri2,
+                  date: book.date,
+                  uid: book.uid,
+                  name: book.name,
+                  default: book.default,
+                })
+              }
+            >
+              <View style={styles.bookCard}>
+                <View style={styles.bookInfo}>
+                  <Text style={styles.bookLabel}>PDF</Text>
+                  <Text style={styles.bookTitle}>{book.title}</Text>
+                  <Text style={styles.bookDate}>{book.date}</Text>
+                </View>
 
-              <View style={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'space-between', height: 60 }}>
-                {/* 🔒 기본 PDF는 삭제 버튼 숨김 */}
-                {!book.default && (
-                  <TouchableOpacity onPress={() => handleDelete(index)} style={{ marginBottom: 12 }}>
-                    <Icon name="more-vert" size={20} color="#A9A9A9" />
+                <View
+                  style={{
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    height: 90,
+                  }}
+                >
+                  {!book.default && (
+                    <TouchableOpacity onPress={() => handleDelete(index)} style={{ marginBottom: 12 }}>
+                      <Icon name="more-vert" size={25} color="#A9A9A9" />
+                    </TouchableOpacity>
+                  )}
+
+                  <TouchableOpacity onPress={() => toggleFavorite(index)}>
+                    <Icon
+                      name={favorites[index] ? 'favorite' : 'favorite-border'}
+                      size={20}
+                      color={favorites[index] ? '#FF6B6B' : '#A9A9A9'}
+                    />
                   </TouchableOpacity>
-                )}
 
-                <TouchableOpacity onPress={() => toggleFavorite(index)}>
-                  <Icon
-                    name={favorites[index] ? 'favorite' : 'favorite-border'}
-                    size={20}
-                    color={favorites[index] ? '#FF6B6B' : '#A9A9A9'}
-                  />
-                </TouchableOpacity>
+                  {book.uri2 && (
+                    <TouchableOpacity
+                      onPress={() => handleExtractText(book.uri2)}
+                      style={{ marginTop: 8 }}
+                    >
+                      <Icon name="description" size={22} color="#007AFF" />
+                    </TouchableOpacity>
+                  )}
+                </View>
               </View>
-            </View>
-          </TouchableOpacity>
+            </TouchableOpacity>
+          </View>
         ))}
       </ScrollView>
 

@@ -1,27 +1,36 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import * as Sharing from 'expo-sharing';
+import React, { useEffect } from 'react';
+import { View, Text, StyleSheet, Platform } from 'react-native';
+import { WebView } from 'react-native-webview';
 
-export default function Bookdetail({ pdfUri }) {
-  const openPDF = async (uri) => {
-    const canShare = await Sharing.isAvailableAsync();
-    if (canShare) {
-      await Sharing.shareAsync(uri);
-    } else {
-      alert('이 디바이스에서는 PDF를 열 수 없습니다.');
-    }
-  };
+export default function Bookdetail({ pdfUri2 }) {
+  useEffect(() => {
+    console.log('📎 전달받은 pdfUri2:', pdfUri2);
+  }, [pdfUri2]);
+
+  const isValidUrl = pdfUri2?.startsWith('http');
 
   return (
     <View style={styles.card}>
-      {pdfUri ? (
-        <TouchableOpacity onPress={() => openPDF(pdfUri)} style={{ padding: 16 }}>
-          <Text style={{ color: '#007AFF', textAlign: 'center', fontWeight: 'bold' }}>
-            PDF 열기
-          </Text>
-        </TouchableOpacity>
+      {isValidUrl ? (
+        <>
+          <Text style={styles.header}>📄 PDF 미리보기</Text>
+          <WebView
+            source={{ uri: pdfUri2 }}
+            style={styles.webview}
+            useWebKit={true}
+            originWhitelist={['*']}
+            startInLoadingState={true}
+            javaScriptEnabled={true}
+            domStorageEnabled={true}
+            allowFileAccess
+            allowsInlineMediaPlayback
+          />
+        </>
       ) : (
-        <Text style={{ textAlign: 'center', color: '#999' }}>PDF가 없습니다.</Text>
+        <View style={styles.emptyBox}>
+          <Text style={styles.noPdf}>⚠️ PDF가 제공되지 않았습니다.</Text>
+          <Text style={styles.small}>Cloudinary에 업로드된 URL이 없거나 잘못 전달되었습니다.</Text>
+        </View>
       )}
     </View>
   );
@@ -40,26 +49,32 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 2,
   },
-  info: {
-    flex: 1,
-    paddingHorizontal: 13,
-    justifyContent: 'center',
-  },
-  label: {
-    color: '#979CA5',
-    fontSize: 15,
-    fontFamily: 'Pretendard-Bold',
-    marginBottom: 2,
-  },
-  title: {
-    color: '#000',
+  header: {
     fontSize: 16,
-    fontFamily: 'Pretendard-Bold',
-    marginBottom: 2,
+    fontWeight: 'bold',
+    marginBottom: 10,
+    textAlign: 'center',
+    color: '#333',
   },
-  date: {
-    color: '#979CA5',
-    fontSize: 12,
-    fontFamily: 'Pretendard-Regular',
+  webview: {
+    flex: 1,
+    width: '100%',
+    height: 380,
+  },
+  emptyBox: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: 380,
+  },
+  noPdf: {
+    textAlign: 'center',
+    color: '#999',
+    fontSize: 16,
+    marginBottom: 6,
+  },
+  small: {
+    textAlign: 'center',
+    color: '#aaa',
+    fontSize: 13,
   },
 });

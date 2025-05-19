@@ -11,8 +11,11 @@ import { useRoute, useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useBookNote } from '../../../../context/BookNoteContext';
 import { styles } from './pdf_page_style';
-import AsyncStorage from '@react-native-async-storage/async-storage'; // ✅ uid 사용
-import { FIREBASE_API_KEY } from '../../../../firebase/firebaseConfig'; // ✅ REST API Key
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as FileSystem from 'expo-file-system';
+
+const CLOUD_NAME = 'dcprq8wxd';
+const UPLOAD_PRESET = 'unsigned_pdf_upload';
 
 export default function PdfPage() {
   const route = useRoute();
@@ -35,10 +38,29 @@ export default function PdfPage() {
       const userUid = await AsyncStorage.getItem('userUid');
       if (!userUid) throw new Error('로그인 정보가 없습니다.');
 
-      // ✅ Context에 저장 (내부 필터링된 북노트에서만 표시됨)
+      // ✅ Cloudinary 업로드
+      const base64File = await FileSystem.readAsStringAsync(uri, {
+        encoding: FileSystem.EncodingType.Base64,
+      });
+
+      const formData = new FormData();
+      formData.append('file', `data:application/pdf;base64,${base64File}`);
+      formData.append('upload_preset', UPLOAD_PRESET);
+
+      const cloudRes = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/upload`, {
+        method: 'POST',
+        body: formData,
+      });
+
+      const cloudData = await cloudRes.json();
+      if (!cloudData.secure_url) throw new Error('Cloudinary 업로드 실패');
+
+      const uploadedUrl = cloudData.secure_url;
+
+      // ✅ Context 저장
       addBookNote(safeTitle, uri);
 
-      // ✅ Firestore에 저장 (REST API)
+      // ✅ Firestore 저장
       const firestoreUrl = `https://firestore.googleapis.com/v1/projects/tonpick-7e5d2/databases/(default)/documents/pdfFiles?documentId=${Date.now()}`;
 
       await fetch(firestoreUrl, {
@@ -46,11 +68,12 @@ export default function PdfPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           fields: {
-            uid: { stringValue: userUid }, // ✅ 사용자 UID 저장
+            uid: { stringValue: userUid },
             title: { stringValue: safeTitle },
             uri: { stringValue: uri },
+            uri2: { stringValue: uploadedUrl },
             createdAt: { timestampValue: new Date().toISOString() },
-            default: { booleanValue: false }, // ✅ 사용자 업로드임을 명시
+            default: { booleanValue: false },
           },
         }),
       });
@@ -58,8 +81,8 @@ export default function PdfPage() {
       Alert.alert('저장이 완료되었습니다.');
       navigation.goBack();
     } catch (error) {
-      console.error('Firestore 저장 오류:', error);
-      Alert.alert('오류', 'Firebase 저장에 실패했습니다.');
+      console.error('업로드 오류:', error);
+      Alert.alert('오류', 'PDF 업로드 또는 저장에 실패했습니다.');
     }
   };
 
