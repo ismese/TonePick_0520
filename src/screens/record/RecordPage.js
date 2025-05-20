@@ -1,3 +1,4 @@
+// RecordPage.js
 import React, { useState } from 'react';
 import {
   View,
@@ -8,6 +9,9 @@ import {
   StatusBar,
   Modal,
   Alert,
+  TextInput,
+  KeyboardAvoidingView,
+  Platform
 } from 'react-native';
 import { styles } from './record_page_style';
 import { useNavigation } from '@react-navigation/native';
@@ -15,11 +19,12 @@ import { Audio } from 'expo-av';
 import BeforeNavigator from '../../navigations/BeforeNavigator';
 import { uploadVoiceClone } from './uploadVoiceClone';
 
-
 export default function RecordPage() {
   const navigation = useNavigation();
   const [recording, setRecording] = useState(null);
   const [isRecordingModalVisible, setRecordingModalVisible] = useState(false);
+  const [isNameModalVisible, setNameModalVisible] = useState(false);
+  const [voiceName, setVoiceName] = useState('');
   const [recordedUris, setRecordedUris] = useState([]);
 
   const startRecording = async () => {
@@ -48,17 +53,11 @@ export default function RecordPage() {
       const uri = recording.getURI();
       console.log('녹음 파일 저장됨:', uri);
       setRecordedUris(prev => [...prev, uri]);
-      await sendToTTSModel(uri);
       setRecording(null);
       setRecordingModalVisible(false);
     } catch (err) {
       console.error('녹음 중지 실패:', err);
     }
-  };
-
-  const sendToTTSModel = async (audioUri) => {
-    console.log('📤 TTS 모델에 전송 준비:', audioUri);
-    // 필요 시 API 업로드 로직 추가
   };
 
   const playRecording = async (uri) => {
@@ -70,6 +69,18 @@ export default function RecordPage() {
       Alert.alert('재생 오류', '녹음 파일을 재생할 수 없습니다.');
     }
   };
+
+  const recordScripts = [
+    '복용을 중단하면 대부분 다시 원래 상태로 돌아가지만, \n일부 경우에는 일정 기간 약물의 효과가 지속되며 신체가 적응하는 시간이 필요합니다.',
+    '불면증은 단순한 수면 부족을 넘어 일상생활에 영향을 줄 수 있는 중요한 증상으로, 정확한 원인 분석과 지속적인 관리가 필요합니다.',
+    '기억력 감퇴는 스트레스와 불안, 수면 부족 등 다양한 요인에서 비롯될 수 있으며, 규칙적인 생활습관 개선이 큰 도움이 됩니다.',
+    '꾸준한 운동은 신체 건강은 물론 정신적인 안정과 우울감 완화에도 효과가 있으며, 일주일에 3회 이상 유산소 운동을 권장합니다.',
+    '건강한 식습관을 유지하는 것은 면역력을 높이고, 감정 기복을 줄이는 데도 큰 역할을 하며 특히 아침 식사는 꼭 챙겨야 합니다.',
+    '심호흡은 짧은 시간 안에 불안을 완화시킬 수 있는 효과적인 방법으로, 깊게 들이마시고 천천히 내쉬는 과정을 3회 이상 반복해보세요.',
+    '충분한 수면은 하루의 피로를 회복시킬 뿐만 아니라, 집중력과 감정 조절 능력을 향상시키는 데에도 매우 중요한 요소입니다.',
+  ];
+  
+
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -137,7 +148,7 @@ export default function RecordPage() {
           ) : (
             <TouchableOpacity
               style={styles.recordButtonLarge}
-              onPress={() => uploadVoiceClone(recordedUris)}
+              onPress={() => setNameModalVisible(true)}
             >
               <Text style={styles.recordButtonText}>내 목소리 만들기</Text>
             </TouchableOpacity>
@@ -154,13 +165,20 @@ export default function RecordPage() {
             <View style={styles.modalContent}>
               <Text style={styles.modalTitle}>음성 녹음</Text>
               <Text style={styles.modalSubtitle}>하단의 텍스트를 읽어주세요.</Text>
-              <Text style={styles.modalText}>
-                복용을 중단하면 대부분 다시 원래 상태로 돌아간다.
-              </Text>
-
-              <View style={styles.waveform}>
-                <Text style={{ color: 'red' }}>🎙️ 실제 파형 시각화 예정</Text>
+              <View style={{ width: '100%', paddingHorizontal: 20, marginVertical: 16 }}>
+                <Text
+                  style={{
+                    fontSize: 16,
+                    lineHeight: 24,
+                    textAlign: 'left',
+                    fontWeight: '500',
+                    color: '#333',
+                  }}
+                >
+                  {recordScripts[recordedUris.length]}
+                </Text>
               </View>
+
 
               <TouchableOpacity
                 onPress={recording ? stopRecording : startRecording}
@@ -173,6 +191,50 @@ export default function RecordPage() {
             </View>
           </View>
         </Modal>
+
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={isNameModalVisible}
+          onRequestClose={() => setNameModalVisible(false)}
+        >
+          <KeyboardAvoidingView
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+            style={styles.modalOverlay}
+          >
+            <View style={styles.modalContent}>
+              <Text style={styles.modalTitle}>보이스 이름 설정</Text>
+              <Text style={styles.nameSubtitle}>녹음된 음성을 어떤 이름으로 저장할까요?</Text>
+              <TextInput
+                style={{
+                  borderWidth: 1,
+                  borderColor: '#ccc',
+                  borderRadius: 10,
+                  width: '90%',
+                  padding: 10,
+                  marginBottom: 20,
+                }}
+                placeholder="예: 진영의 목소리"
+                value={voiceName}
+                onChangeText={setVoiceName}
+              />
+              <TouchableOpacity
+                style={styles.recordButtonLarge}
+                onPress={() => {
+                  if (voiceName.trim().length === 0) {
+                    Alert.alert('알림', '보이스 이름을 입력해주세요.');
+                    return;
+                  }
+                  setNameModalVisible(false);
+                  uploadVoiceClone(recordedUris, voiceName);
+                }}
+              >
+                <Text style={styles.recordButtonText}>저장하기</Text>
+              </TouchableOpacity>
+            </View>
+          </KeyboardAvoidingView>
+        </Modal>
+
       </View>
     </SafeAreaView>
   );

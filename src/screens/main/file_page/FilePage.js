@@ -126,67 +126,64 @@ export default function FilePage() {
 
       <ScrollView style={styles.bookcontainer} contentContainerStyle={{ paddingBottom: 100 }}>
         {bookNote.map((book, index) => (
-          <View key={index}>
-            <TouchableOpacity
-              onPress={() =>
-                navigation.navigate('FileDetailPage', {
-                  pdfUri: book.uri,
-                  pdfName: book.title,
-                  pdfUri2: book.uri2,
-                  date: book.date,
-                  uid: book.uid,
-                  name: book.name,
-                  default: book.default,
-                })
-              }
-            >
-              <View style={styles.bookCard}>
-                <View style={styles.bookInfo}>
-                  <Text style={styles.bookLabel}>PDF</Text>
-                  <Text style={styles.bookTitle}>{book.title}</Text>
-                  <Text style={styles.bookDate}>{book.date}</Text>
-                </View>
+              <TouchableOpacity
+                key={index}
+                onPress={() =>
+                  navigation.navigate('FileDetailPage', {
+                    pdfUri: book.uri,
+                    pdfName: book.title,
+                    pdfUri2: book.uri2,
+                    date: book.date,
+                    uid: book.uid,
+                    name: book.name,
+                    default: book.default,
+                  })
+                }
+              >
+                <View style={styles.bookCard}>
+                  <View style={styles.bookInfo}>
+                    <Text style={styles.bookLabel}>PDF</Text>
+                    <Text style={styles.bookTitle}>{book.title}</Text>
+                    <Text style={styles.bookDate}>
+                      {new Date(book.date).toLocaleString('ko-KR', {
+                        year: 'numeric',
+                        month: '2-digit',
+                        day: '2-digit',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        hour12: false,
+                      }).replace(/\. /g, '.').replace('.', '.')}
+                    </Text>
+                  </View>
 
-                <View
-                  style={{
-                    flexDirection: 'column',
-                    alignItems: 'center',
+                  {/* 아이콘 정렬 박스 */}
+                  <View style={{
+                    position: 'absolute',
+                    right: 12,
+                    top: 12,
+                    bottom: 12,
                     justifyContent: 'space-between',
-                    height: 90,
-                  }}
-                >
-                  {!book.default && (
-                    <TouchableOpacity onPress={() => handleDelete(index)} style={{ marginBottom: 12 }}>
-                      <Icon name="more-vert" size={25} color="#A9A9A9" />
+                    alignItems: 'flex-end',
+                  }}>
+                    {!book.default && (
+                      <TouchableOpacity onPress={() => handleDelete(index)}>
+                        <Icon name="more-vert" size={20} color="#A9A9A9" top={5} />
+                      </TouchableOpacity>
+                    )}
+                    <TouchableOpacity onPress={() => toggleFavorite(index)}>
+                      <Icon
+                        name={favorites[index] ? 'favorite' : 'favorite-border'}
+                        size={20}
+                        color={favorites[index] ? '#FF6B6B' : '#A9A9A9'}
+                      />
                     </TouchableOpacity>
-                  )}
-
-                  <TouchableOpacity onPress={() => toggleFavorite(index)}>
-                    <Icon
-                      name={favorites[index] ? 'favorite' : 'favorite-border'}
-                      size={20}
-                      color={favorites[index] ? '#FF6B6B' : '#A9A9A9'}
-                    />
-                  </TouchableOpacity>
-
-                  {book.uri2 && (
-                    <TouchableOpacity
-                      onPress={() => handleExtractText(book.uri2)}
-                      style={{ marginTop: 8 }}
-                    >
-                      <Icon name="description" size={22} color="#007AFF" />
-                    </TouchableOpacity>
-                  )}
+                  </View>
                 </View>
-              </View>
-            </TouchableOpacity>
-          </View>
-        ))}
+
+              </TouchableOpacity>
+            ))}
       </ScrollView>
 
-      <TouchableOpacity style={styles.addButton} onPress={handleAddFile}>
-        <Icon name="add" size={28} color="white" />
-      </TouchableOpacity>
     </SafeAreaView>
   );
 }

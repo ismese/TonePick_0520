@@ -1,3 +1,4 @@
+// MainPage.js (수정됨 - PDF 버튼 클릭 시 FileDetailPage 이동)
 import React, { useState, useEffect } from 'react';
 import * as DocumentPicker from 'expo-document-picker';
 import {
@@ -20,7 +21,7 @@ import { Audio } from 'expo-av';
 export default function MainPage() {
   const navigation = useNavigation();
   const [showAddModal, setShowAddModal] = useState(false);
-  const [visibleNotes, setVisibleNotes] = useState([]);
+  const [bookNote, setBookNote] = useState([]);
   const [favorites, setFavorites] = useState([]);
   const [voiceList, setVoiceList] = useState([]);
 
@@ -65,15 +66,16 @@ export default function MainPage() {
               title: fields.title.stringValue,
               date: fields.createdAt.timestampValue,
               uri: fields.uri.stringValue,
+              uri2: fields.uri2?.stringValue || '',
               name: doc.name,
               uid: fields.uid?.stringValue || null,
-              isFavorite: fields.isFavorite?.booleanValue || false,
+              default: fields.default?.booleanValue || false,
             };
           })
-          .filter((doc) => doc.uid === userUid);
+          .filter((doc) => doc.default === true || doc.uid === userUid);
 
-        setVisibleNotes(filtered);
-        setFavorites(filtered.map((doc) => doc.isFavorite));
+        setBookNote(filtered);
+        setFavorites(Array(filtered.length).fill(false));
       } catch (error) {
         console.error('북노트 불러오기 실패:', error);
       }
@@ -82,51 +84,40 @@ export default function MainPage() {
     fetchNotes();
   }, []);
 
-  const toggleFavorite = async (index) => {
-    const updated = [...favorites];
-    updated[index] = !updated[index];
-    setFavorites(updated);
-
-    const userUid = await AsyncStorage.getItem('userUid');
-    const targetNote = visibleNotes[index];
-
-    try {
-      const res = await fetch(
-        `https://firestore.googleapis.com/v1/projects/tonpick-7e5d2/databases/(default)/documents/pdfFiles`
-      );
-      const data = await res.json();
-      const match = data.documents.find(
-        (doc) =>
-          doc.fields?.uri?.stringValue === targetNote.uri &&
-          doc.fields?.uid?.stringValue === userUid
-      );
-
-      if (match) {
-        await fetch(
-          `https://firestore.googleapis.com/v1/${match.name}?updateMask.fieldPaths=isFavorite`,
-          {
-            method: 'PATCH',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              fields: {
-                isFavorite: { booleanValue: updated[index] },
-              },
-            }),
-          }
-        );
-      }
-    } catch (error) {
-      console.error('즐겨찾기 업데이트 실패:', error);
-    }
+  const toggleFavorite = (index) => {
+    const newFavorites = [...favorites];
+    newFavorites[index] = !newFavorites[index];
+    setFavorites(newFavorites);
   };
 
-  const playVoice = async (uri) => {
-    try {
-      const { sound } = await Audio.Sound.createAsync({ uri });
-      await sound.playAsync();
-    } catch (err) {
-      Alert.alert('재생 실패', '음성 파일을 재생할 수 없습니다.');
-    }
+  const handleDelete = async (index) => {
+    const fileToDelete = bookNote[index];
+    Alert.alert(
+      '삭제 확인',
+      `'${fileToDelete.title}' 파일을 삭제하시겠습니까?`,
+      [
+        { text: '취소', style: 'cancel' },
+        {
+          text: '삭제',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await fetch(`https://firestore.googleapis.com/v1/${fileToDelete.name}`, {
+                method: 'DELETE',
+              });
+              const updated = [...bookNote];
+              updated.splice(index, 1);
+              setBookNote(updated);
+              const updatedFav = [...favorites];
+              updatedFav.splice(index, 1);
+              setFavorites(updatedFav);
+            } catch (err) {
+              Alert.alert('삭제 실패', '데이터 삭제 중 오류가 발생했습니다.');
+            }
+          },
+        },
+      ]
+    );
   };
 
   const handlePdfPickAndNavigate = async () => {
@@ -135,78 +126,28 @@ export default function MainPage() {
         type: 'application/pdf',
         copyToCacheDirectory: true,
       });
-
-      if (result.canceled) return;
-
-      const { uri } = result.assets[0];
-      setShowAddModal(false);
-      navigation.navigate('PdfPage', { uri });
+  
+      if (result.canceled || result.assets.length === 0) return;
+  
+      const selectedFile = result.assets[0];
+      setShowAddModal(false); // 모달 닫기
+  
+      navigation.navigate('PdfPage', {
+        uri: selectedFile.uri, // PdfPage는 이걸 props로 받음
+      });
     } catch (error) {
       Alert.alert('PDF 선택 실패', error.message);
     }
   };
+  
 
-  const handleDelete = (index) => {
-    Alert.alert(
-      '삭제 확인',
-      `'${visibleNotes[index].title}' 파일을 삭제하시겠습니까?`,
-      [
-        { text: '취소', style: 'cancel' },
-        {
-          text: '삭제',
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              const toDelete = visibleNotes[index];
-              const userUid = await AsyncStorage.getItem('userUid');
-
-              const res = await fetch(
-                `https://firestore.googleapis.com/v1/projects/tonpick-7e5d2/databases/(default)/documents/pdfFiles`
-              );
-              const data = await res.json();
-              const match = data.documents.find(
-                (doc) =>
-                  doc.fields?.uri?.stringValue === toDelete.uri &&
-                  doc.fields?.uid?.stringValue === userUid
-              );
-
-              if (match) {
-                await fetch(
-                  `https://firestore.googleapis.com/v1/projects/tonpick-7e5d2/databases/(default)/documents/deletedPdfFiles`,
-                  {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                      fields: {
-                        title: { stringValue: toDelete.title },
-                        uri: { stringValue: toDelete.uri },
-                        uid: { stringValue: toDelete.uid },
-                        isFavorite: { booleanValue: toDelete.isFavorite },
-                        deletedAt: { timestampValue: new Date().toISOString() },
-                      },
-                    }),
-                  }
-                );
-
-                await fetch(`https://firestore.googleapis.com/v1/${match.name}`, {
-                  method: 'DELETE',
-                });
-
-                const deleted = [...visibleNotes];
-                deleted.splice(index, 1);
-                setVisibleNotes(deleted);
-
-                const updatedFav = [...favorites];
-                updatedFav.splice(index, 1);
-                setFavorites(updatedFav);
-              }
-            } catch (e) {
-              Alert.alert('삭제 실패', '오류가 발생했습니다.');
-            }
-          },
-        },
-      ]
-    );
+  const playVoice = async (uri) => {
+    try {
+      const { sound } = await Audio.Sound.createAsync({ uri });
+      await sound.playAsync();
+    } catch (err) {
+      Alert.alert('재생 실패', '음성 파일을 재생할 수 없습니다.');
+    }
   };
 
   return (
@@ -250,18 +191,50 @@ export default function MainPage() {
         </View>
 
         <ScrollView style={styles.bookcontainer}>
-          {visibleNotes.map((book, index) => (
-            <TouchableOpacity key={index}>
+          {bookNote.map((book, index) => (
+            <TouchableOpacity
+              key={index}
+              onPress={() =>
+                navigation.navigate('FileDetailPage', {
+                  pdfUri: book.uri,
+                  pdfName: book.title,
+                  pdfUri2: book.uri2,
+                  date: book.date,
+                  uid: book.uid,
+                  name: book.name,
+                  default: book.default,
+                })
+              }
+            >
               <View style={styles.bookCard}>
                 <View style={styles.bookInfo}>
                   <Text style={styles.bookLabel}>PDF</Text>
                   <Text style={styles.bookTitle}>{book.title}</Text>
-                  <Text style={styles.bookDate}>{book.date}</Text>
+                  <Text style={styles.bookDate}>
+                    {new Date(book.date).toLocaleString('ko-KR', {
+                      year: 'numeric',
+                      month: '2-digit',
+                      day: '2-digit',
+                      hour: '2-digit',
+                      minute: '2-digit',
+                      hour12: false,
+                    }).replace(/\. /g, '.').replace('.', '.')}
+                  </Text>
                 </View>
-                <View style={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'space-between', height: 60 }}>
-                  <TouchableOpacity onPress={() => handleDelete(index)} style={{ marginBottom: 12 }}>
-                    <Icon name="more-vert" size={20} color="#A9A9A9" />
-                  </TouchableOpacity>
+
+                <View style={{
+                  position: 'absolute',
+                  right: 12,
+                  top: 12,
+                  bottom: 12,
+                  justifyContent: 'space-between',
+                  alignItems: 'flex-end',
+                }}>
+                  {!book.default && (
+                    <TouchableOpacity onPress={() => handleDelete(index)}>
+                      <Icon name="more-vert" size={20} color="#A9A9A9" top={5} />
+                    </TouchableOpacity>
+                  )}
                   <TouchableOpacity onPress={() => toggleFavorite(index)}>
                     <Icon
                       name={favorites[index] ? 'favorite' : 'favorite-border'}

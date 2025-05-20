@@ -43,7 +43,7 @@ export const uploadVoiceClone = async (recordedUris) => {
     console.log('✅ 생성된 Voice ID:', voiceId);
 
     // 2. TTS 음성 생성
-    const text = '안녕하세요. 저는 안성수 목소리를 기반으로 만들어진 인공지능 음성입니다.';
+    const text = '안녕하세요. 저는 사용자 목소리를 기반으로 만들어진 인공지능 음성입니다.';
     const ttsRes = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`, {
       method: 'POST',
       headers: {

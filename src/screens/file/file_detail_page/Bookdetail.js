@@ -1,3 +1,4 @@
+// Bookdetail.js
 import React, { useEffect } from 'react';
 import { View, Text, StyleSheet, Platform } from 'react-native';
 import { WebView } from 'react-native-webview';
@@ -13,7 +14,6 @@ export default function Bookdetail({ pdfUri2 }) {
     <View style={styles.card}>
       {isValidUrl ? (
         <>
-          <Text style={styles.header}>📄 PDF 미리보기</Text>
           <WebView
             source={{ uri: pdfUri2 }}
             style={styles.webview}
@@ -39,11 +39,11 @@ export default function Bookdetail({ pdfUri2 }) {
 const styles = StyleSheet.create({
   card: {
     width: '100%',
-    height: 440,
+    height: 410,
     backgroundColor: 'white',
     borderRadius: 20,
     padding: 10,
-    marginBottom: 10,
+    marginBottom: 0,
     shadowColor: '#000',
     shadowOffset: { width: 4, height: 4 },
     shadowOpacity: 0.1,

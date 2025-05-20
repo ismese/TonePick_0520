@@ -42,7 +42,7 @@ export const styles = StyleSheet.create({
     lineHeight: 28,
   },
   sectionDesc: {
-    fontSize: 14,
+    fontSize: 15,
     fontFamily: 'Pretendard-Bold',
     color: '#757575',
     marginTop: 6,

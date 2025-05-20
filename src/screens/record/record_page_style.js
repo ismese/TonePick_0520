@@ -147,14 +147,14 @@ progressRow: {
   modalTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    marginBottom: 8,
+    marginBottom: 10,
     color: '#000',
   },
   
   modalSubtitle: {
     fontSize: 14,
     color: '#666',
-    marginBottom: 12,
+    marginBottom: 1,
   },
   
   modalText: {
@@ -177,6 +177,12 @@ progressRow: {
   modalClose: {
     fontSize: 14,
     color: '#007AFF',
-  }
+  },
+  
+  nameSubtitle: {
+    fontSize: 14,
+    color: '#666',
+    marginBottom: 15,
+  },
   
 });

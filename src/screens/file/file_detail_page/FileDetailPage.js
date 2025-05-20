@@ -138,7 +138,7 @@ export default function FileDetailPage() {
     if (!pdfUri2) return;
     setLoading(true);
     try {
-      const res = await fetch('http://10.20.66.16:5000/pdf-to-text', {
+      const res = await fetch('http://10.20.32.126:5000/pdf-to-text', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ url: pdfUri2 }),
@@ -188,83 +188,92 @@ export default function FileDetailPage() {
 
       <ScrollView vertical showsVerticalScrollIndicator={false} style={styles.bookContainer}>
         <Bookdetail pdfUri2={pdfUri2} />
+      </ScrollView>
 
+      <View>
         {pdfUri2 && (
-          <View style={{ marginTop: 24, paddingHorizontal: 16 }}>
-            <TouchableOpacity
-              onPress={handleExtractTextAndShowVoices}
-              style={{
-                backgroundColor: '#007AFF',
-                paddingVertical: 10,
-                paddingHorizontal: 20,
-                borderRadius: 8,
-                alignSelf: 'flex-start',
-              }}
-            >
-              <Text style={{ color: '#fff', fontSize: 14 }}>책 읽어주기</Text>
-            </TouchableOpacity>
-
-            {loading && (
-              <ActivityIndicator size="small" color="#007AFF" style={{ marginTop: 12 }} />
-            )}
-
-            {showVoiceList && !loading && (
-              <>
-                <Text style={{ marginTop: 16, fontSize: 14, fontWeight: 'bold' }}>
-                  🔊 보이스 선택:
-                </Text>
-                <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginTop: 8 }}>
-                  {firestoreVoiceList.map((voice, index) => (
-                    <TouchableOpacity
-                      key={index}
-                      onPress={() => {
-                        Alert.alert(
-                          '보이스 선택',
-                          '선택한 보이스를 선택하시겠습니까?',
-                          [
-                            { text: '취소', style: 'cancel' },
-                            {
-                              text: '확인',
-                              onPress: () => setSelectedVoiceId(voice.voiceId),
-                            },
-                          ],
-                          { cancelable: true }
-                        );
-                      }}
-                      style={{
-                        backgroundColor: selectedVoiceId === voice.voiceId ? '#007AFF' : '#EFEFEF',
-                        padding: 10,
-                        borderRadius: 8,
-                        marginRight: 8,
-                      }}
-                    >
-                      <Text style={{ color: selectedVoiceId === voice.voiceId ? '#fff' : '#333' }}>
-                        {voice.voiceId.slice(0, 10)}...
-                      </Text>
-                    </TouchableOpacity>
-                  ))}
-                </ScrollView>
-              </>
-            )}
-
-            {selectedVoiceId && extractedText && (
+            <View style={{marginBottom: 0,alignItems: 'center' }}>
               <TouchableOpacity
-                onPress={handleTTSPlay}
+                onPress={handleExtractTextAndShowVoices}
+                disabled={loading}
                 style={{
-                  backgroundColor: '#FF6B6B',
+                  backgroundColor: '#007AFF',
                   paddingVertical: 10,
-                  paddingHorizontal: 20,
-                  borderRadius: 8,
-                  alignSelf: 'flex-start',
-                  marginTop: 20,
+                  paddingHorizontal: 145,
+                  borderRadius: 15,
+                  justifyContent: 'center',
+                  alignItems: 'center',
                 }}
               >
-                <Text style={{ color: '#fff', fontSize: 14 }}>🔊 음성 듣기</Text>
+                <View style={{ width: 65,height:18, alignSelf:'center',alignItems: 'center' }}>
+                  {loading ? (
+                    <ActivityIndicator size="small" color="#fff" />
+                  ) : (
+                    <Text style={{ color: '#fff', fontSize: 16, fontFamily: 'Pretendard-Bold' }}>
+                      텍스트 추출
+                    </Text>
+                  )}
+                </View>
               </TouchableOpacity>
-            )}
-          </View>
-        )}
-      </ScrollView>
+
+
+
+              {showVoiceList && !loading && (
+                <>
+                  
+                  <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginTop: 8 }}>
+                    {firestoreVoiceList.map((voice, index) => (
+                      <TouchableOpacity
+                        key={index}
+                        onPress={() => {
+                          Alert.alert(
+                            '보이스 선택',
+                            '선택한 보이스를 선택하시겠습니까?',
+                            [
+                              { text: '취소', style: 'cancel' },
+                              {
+                                text: '확인',
+                                onPress: () => setSelectedVoiceId(voice.voiceId),
+                              },
+                            ],
+                            { cancelable: true }
+                          );
+                        }}
+                        style={{
+                          backgroundColor: selectedVoiceId === voice.voiceId ? '#007AFF' : '#EFEFEF',
+                          padding: 10,
+                          borderRadius: 8,
+                          marginRight: 8,
+                        }}
+                      >
+                        <Text style={{ color: selectedVoiceId === voice.voiceId ? '#fff' : '#333' }}>
+                          {voice.voiceId.slice(0, 10)}...
+                        </Text>
+                      </TouchableOpacity>
+                    ))}
+                  </ScrollView>
+                </>
+              )}
+
+              {selectedVoiceId && extractedText && (
+                <TouchableOpacity
+                  onPress={handleTTSPlay}
+                  style={{
+                    backgroundColor: '#FF6B6B',
+                    paddingVertical: 10,
+                    paddingHorizontal: 20,
+                    borderRadius: 8,
+                    alignSelf: 'flex-start',
+                    marginTop: 20,
+                  }}
+                >
+                  <Text style={{ color: '#fff', fontSize: 14 }}>🔊 음성 듣기</Text>
+                </TouchableOpacity>
+              )}
+            </View>
+          )}
+
+      </View>
     </SafeAreaView>
   );
 }

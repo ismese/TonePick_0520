@@ -1,4 +1,4 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Dimensions } from 'react-native';
 
 export const styles = StyleSheet.create({
   container: {
@@ -7,11 +7,10 @@ export const styles = StyleSheet.create({
   },
   header: {
     height: 60,
-    justifyContent: 'center', // ← 가운데 텍스트 중심
+    justifyContent: 'center',
     alignItems: 'center',
-    position: 'relative',     // ← 메뉴 버튼 절대 위치 기준
+    position: 'relative',
   },
-  
   title: {
     color: '#473B3B',
     fontSize: 22,
@@ -20,15 +19,10 @@ export const styles = StyleSheet.create({
     lineHeight: 30,
     textAlign: 'center',
   },
-  
   menuButton: {
     position: 'absolute',
-    left: 28,                // ← 화면 오른쪽 여백
-    top: 22,                  // ← 세로 위치 조정
-  },
-  menuIcon: {
-    width: 36,
-    height: 36,
+    left: 28,
+    top: 22,
   },
   section: {
     paddingHorizontal: 30,
@@ -42,34 +36,31 @@ export const styles = StyleSheet.create({
     lineHeight: 28,
   },
   sectionDesc: {
-    fontSize: 14,
+    fontSize: 15,
     fontFamily: 'Pretendard-Bold',
     color: '#757575',
     marginTop: 6,
   },
   cardList: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'center',
-    columnGap:30,
-    rowGap:20,
-    paddingVertical: 20,
+    paddingVertical: 25,
+    paddingHorizontal: 1,
+    gap: 1,
   },
   card: {
-    width: 156,
+    width: (Dimensions.get('window').width - 30 * 2 - 16) / 2,
     height: 219,
     backgroundColor: 'white',
     borderRadius: 20,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.1,
+    shadowOffset: { width: 1, height: 4 },
+    shadowOpacity: 0.155,
     shadowRadius: 4,
     borderWidth: 4,
     borderColor: 'white',
-    zIndex: 10,
     paddingTop: 28,
     alignItems: 'center',
     position: 'relative',
+    marginBottom: 20,
   },
   cardImage: {
     width: 80,
@@ -110,59 +101,4 @@ export const styles = StyleSheet.create({
     bottom: 16,
     gap: 20,
   },
-  bottomNav: {
-    height:'12%',
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'center',
-    backgroundColor: 'white',
-    position: 'absolute',
-    bottom: 0,
-    width: '100%',
-    zIndex: 1,
-  },
-  navItem: {
-    alignItems: 'center',
-  },
-  navIconHome: {
-    width: 20,
-    height: 20,
-    backgroundColor: '#473B3B',
-  },
-  navIconInfo: {
-    width: 20,
-    height: 20,
-    backgroundColor: '#CCD0D7',
-  },
-  navLabelActive: {
-    color: '#473B3B',
-    fontSize: 10,
-    fontFamily: 'Pretendard',
-    fontWeight: '500',
-  },
-  navLabel: {
-    color: '#CCD0D7',
-    fontSize: 10,
-    fontFamily: 'Pretendard',
-    fontWeight: '500',
-  },
-  addButton: {
-    width: 66,
-    height: 66,
-    backgroundColor: '#705F5F',
-    borderRadius: 100,
-    justifyContent: 'center',
-    alignItems: 'center',
-    position: 'absolute',
-    bottom: 48,
-    alignSelf: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    borderWidth: 4,
-    borderColor: 'white',
-    zIndex: 10,
-  },
-  
 });
