@@ -12,7 +12,6 @@ import {
 import { styles } from './change_password_screen_style';
 import BeforeNavigator from '../../../navigations/BeforeNavigator';
 import { useNavigation } from '@react-navigation/native';
-import { FIREBASE_API_KEY } from '../../../firebase/firebaseConfig';
 
 const ChangePasswordScreen = () => {
   const navigation = useNavigation();
@@ -30,7 +29,7 @@ const ChangePasswordScreen = () => {
         <BeforeNavigator onPress={() => navigation.goBack()} />
       </View>
 
-      <KeyboardAvoidingView
+      <View
         style={{ flex: 1 }}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         keyboardVerticalOffset={100}
@@ -73,14 +72,11 @@ const ChangePasswordScreen = () => {
               onChangeText={setPhone}
             />
           </View>
-
-          <View style={{ marginTop: 30 }}>
             <TouchableOpacity style={styles.submitButton} onPress={handlePasswordChange}>
               <Text style={styles.submitButtonText}>변경하기</Text>
             </TouchableOpacity>
-          </View>
         </View>
-      </KeyboardAvoidingView>
+      </View>
     </SafeAreaView>
   );
 };

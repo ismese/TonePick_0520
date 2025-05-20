@@ -8,6 +8,7 @@ export const styles = StyleSheet.create({
     backgroundColor: "white",
   },
   container: {
+    flex: 1,   
     paddingHorizontal: 30,
     paddingTop: 80,
     backgroundColor: 'white',
@@ -53,7 +54,7 @@ export const styles = StyleSheet.create({
     borderRadius: 15,
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 100,
+    marginTop: 90,
   },
   submitButtonText: {
     color: 'white',

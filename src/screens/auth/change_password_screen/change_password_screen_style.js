@@ -6,8 +6,10 @@ export const styles = StyleSheet.create({
     backgroundColor: "white",
   },
   container: {
+    flex: 1,
     paddingHorizontal: 30,
     paddingTop: 80,
+    paddingBottom: 60, // ✅ 버튼 여백 확보
     backgroundColor: 'white',
     alignItems: 'center',
   },
@@ -63,7 +65,7 @@ export const styles = StyleSheet.create({
     borderRadius: 15,
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 350,
+    marginTop: 260, 
   },
   submitButtonText: {
     color: 'white',

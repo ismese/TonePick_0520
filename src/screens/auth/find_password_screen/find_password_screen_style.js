@@ -63,7 +63,7 @@ export const styles = StyleSheet.create({
     borderRadius: 15,
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 350,
+    marginTop: 260,
   },
   submitButtonText: {
     color: 'white',
